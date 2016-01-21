@@ -1,0 +1,18 @@
+.button {
+  -fx-color: #ffffff;
+  -fx-background-color: #ffffff;
+  -fx-border-color: #ccc;
+  -fx-border-radius: 4px;
+}
+
+.button:hover{
+  -fx-color: #ffffff;
+  -fx-background-color: #ccc;
+  -fx-border-color: #ccc;
+}
+
+#controllerBox {
+  -fx-border-color: #000000;
+  -fx-border-style: solid;
+  -fx-border-width: 1px;
+}
