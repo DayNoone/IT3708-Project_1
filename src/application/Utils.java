@@ -26,8 +26,8 @@ public class Utils {
      * @return
      */
     public static ImageView createArrowImageView(int id, double size) {
-
-        return createArrowImageView(id, size, size / 2.0, Color.BLUE, Color.BLUE.deriveColor(1, 1, 1, 0.3), 1);
+        return (new ImageView(new Image("res/Boid.png", size, size/2.0, true, true)));
+        //return createArrowImageView(id, size, size / 2.0, Color.BLUE, Color.BLUE.deriveColor(1, 1, 1, 0.3), 1);
 
     }
 
@@ -77,10 +77,12 @@ public class Utils {
         int imageHeight = (int) height;
 
         wi = new WritableImage( imageWidth, imageHeight);
-        WritableImage a = arrow.snapshot(parameters, wi);
+        //WritableImage a = arrow.snapshot(parameters, wi);
         //text.snapshot(textParameters, a);
 
-        return a;
+
+
+        return wi;
 
     }
 

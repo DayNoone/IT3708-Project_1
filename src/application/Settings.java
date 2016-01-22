@@ -3,6 +3,7 @@ package application;
 
 public class Settings {
 
+    public static double BOID_WIDHT = 50;
     public static double SCENE_WIDTH = 1800;
     public static double SCENE_HEIGHT = 800;
 

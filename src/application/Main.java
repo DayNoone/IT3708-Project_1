@@ -34,6 +34,7 @@ public class Main extends Application {
 
     MouseGestures mouseGestures = new MouseGestures();
 
+    Label seperationSliderLabel, alignmentSliderLabel, cohesionSliderLabel;
     Slider speedSlider, seperationSlider, alignmentSlider, cohesionSlider;
     Button button;
 
@@ -50,9 +51,9 @@ public class Main extends Application {
         controlsBox.setId("controllerBox");
         button = new Button("Click Me");
         Label speedLabel = new Label("Speed");
-        Label seperationSliderLabel = new Label("SeperationWeight");
-        Label alignmentSliderLabel = new Label("AlignmentWeight");
-        Label cohesionSliderLabel = new Label("CohesionWeight");
+        seperationSliderLabel = new Label("SeperationWeight: " + Settings.SEPERATION_WEIGHT);
+        alignmentSliderLabel = new Label("AlignmentWeight: " + Settings.ALIGNMENT_WEIGHT);
+        cohesionSliderLabel = new Label("CohesionWeight: " + Settings.COHESION_WEIGHT);
         speedSlider = new Slider(0, 100, Settings.SPRITE_SPEED);
         seperationSlider = new Slider(0, 10, Settings.SEPERATION_WEIGHT);
         alignmentSlider = new Slider(0, 10, Settings.ALIGNMENT_WEIGHT);
@@ -150,7 +151,7 @@ public class Main extends Application {
         double vy = random.nextDouble() * 10 -5;;
 
         // dimensions
-        double width = 10;
+        double width = Settings.BOID_WIDHT;
         double height = width / 2.0;
 
         // create boid data
@@ -202,20 +203,20 @@ public class Main extends Application {
             System.out.print("Button Action\n");
         });
         speedSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("Slider Value Changed (newValue: " + newValue.intValue() + ")");
             Settings.SPRITE_SPEED = newValue.intValue();
         });
         seperationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             System.out.println("seperationSlider Value Changed (newValue: " + newValue.intValue() + ")");
             Settings.SEPERATION_WEIGHT = newValue.intValue();
+            seperationSliderLabel.setText("SeperationWeight: " + Settings.SEPERATION_WEIGHT);
         });
         alignmentSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("alignmentSlider Value Changed (newValue: " + newValue.intValue() + ")");
             Settings.ALIGNMENT_WEIGHT = newValue.intValue();
+            alignmentSliderLabel.setText("AlignmentWeight: " + Settings.ALIGNMENT_WEIGHT);
         });
         cohesionSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("cohesionSlider Value Changed (newValue: " + newValue.intValue() + ")");
             Settings.COHESION_WEIGHT = newValue.intValue();
+            cohesionSliderLabel.setText("CohesionWeight: " + Settings.COHESION_WEIGHT);
         });
 
         // move attractors via mouse
