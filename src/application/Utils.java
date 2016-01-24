@@ -6,6 +6,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
@@ -21,14 +22,23 @@ public class Utils {
 
     /**
      * Create an imageview of a right facing arrow.
-     * @param id
      * @param size The width. The height is calculated as width / 2.0.
      * @return
      */
-    public static ImageView createArrowImageView(int id, double size) {
+    public static ImageView createArrowImageView(double size) {
         return (new ImageView(new Image("res/Boid.png", size, size/2.0, true, true)));
         //return createArrowImageView(id, size, size / 2.0, Color.BLUE, Color.BLUE.deriveColor(1, 1, 1, 0.3), 1);
 
+    }
+
+    public static ImageView createObstacleImageView(double radius) {
+        //return (new ImageView(new Image("res/Boid.png", size, size/2.0, true, true)));
+        WritableImage wi;
+        Circle circle = new Circle();
+        circle.setFill(Color.BLUE.deriveColor(1, 1, 1, 0.3));
+        circle.setRadius(radius);
+        wi = new WritableImage((int) radius, (int) radius);
+        return new ImageView(wi);
     }
 
     /**
@@ -38,9 +48,7 @@ public class Utils {
      * @return
      */
     public static ImageView createArrowImageView(int id, double width, double height, Paint stroke, Paint fill, double strokeWidth) {
-
         return new ImageView( createArrowImage(id, width, height, stroke, fill, strokeWidth));
-
     }
 
     /**

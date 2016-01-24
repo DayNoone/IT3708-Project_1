@@ -4,9 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.SynchronousQueue;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.event.EventType;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -23,6 +25,7 @@ public class Main extends Application {
 
     Layer playfield;
 
+    List<Obstacle> allObstacles = new ArrayList<Obstacle>();
     List<Attractor> allAttractors = new ArrayList<>();
     List<Boid> allBoids = new ArrayList<>();
 
@@ -127,6 +130,7 @@ public class Main extends Application {
                 // update in fx scene
                 allBoids.forEach(Sprite::display);
                 allAttractors.forEach(Sprite::display);
+                allObstacles.forEach(Sprite::display);
 
             }
         };
@@ -164,6 +168,18 @@ public class Main extends Application {
         // register boid
         allBoids.add(boid);
 
+    }
+
+    private void addObstacle(MouseEvent event) {
+        Layer layer = playfield;
+
+        Vector2D location = new Vector2D(event.getX(), event.getY());
+
+        double radius = Settings.OBSTACLE_SIZE;
+
+        Obstacle obstacle = new Obstacle(layer, location, radius);
+
+        allObstacles.add(obstacle);
     }
 
     private void addAttractors() {
@@ -217,6 +233,10 @@ public class Main extends Application {
         cohesionSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             Settings.COHESION_WEIGHT = newValue.intValue();
             cohesionSliderLabel.setText("CohesionWeight: " + Settings.COHESION_WEIGHT);
+        });
+
+        scene.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            addObstacle(e);
         });
 
         // move attractors via mouse

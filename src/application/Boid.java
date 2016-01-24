@@ -13,7 +13,7 @@ public class Boid extends Sprite {
 
     @Override
     public Node createView() {
-        return Utils.createArrowImageView(id, (int) width);
+        return Utils.createArrowImageView((int) width);
     }
 
     @Override
