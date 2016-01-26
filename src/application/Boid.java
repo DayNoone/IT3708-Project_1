@@ -17,7 +17,7 @@ public class Boid extends Sprite {
     }
 
     @Override
-    public void updateVelocity(List<Boid> allBoids) {
+    public void updateVelocity(List<Boid> allBoids, List<Obstacle> allObstacles) {
         List<Boid> neighbors = this.findNeighbours(allBoids);
         if (neighbors.size() == 0) {
             return;
@@ -34,9 +34,33 @@ public class Boid extends Sprite {
         velocity.add(align);
         velocity.add(coh);
 
+        allObstacles.forEach(obstacle -> {
+            Vector2D clockWiseVelocity = new Vector2D(velocity);
+            Vector2D counterClockWiseVelocity = new Vector2D(velocity);
+            while(this.collides(velocity, obstacle)) {
+               clockWiseVelocity.rotate(1);
+               counterClockWiseVelocity.rotate(-1);
+
+               if (!this.collides(clockWiseVelocity, obstacle)) {
+                   velocity = clockWiseVelocity;
+                   break;
+               }
+               if (!this.collides(counterClockWiseVelocity, obstacle)){
+                   velocity = counterClockWiseVelocity;
+                   break;
+               }
+            }
+        });
+
         velocity.normalize();
         velocity.multiply(Settings.SPRITE_SPEED);
     }
+
+    private boolean collides(Vector2D velocity, Obstacle obstacle) {
+        Vector2D distance = Vector2D.subtract(obstacle.location, new Vector2D(this.location.x + velocity.x, this.location.y + velocity.y));
+        return distance.magnitude() < obstacle.width;
+    }
+
     private Vector2D calculateSeparationForce(List<Boid> neighbors) {
         // average of the vectors from boid to neighbours
         Vector2D seperation = new Vector2D(0, 0);

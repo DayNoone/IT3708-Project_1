@@ -54,7 +54,7 @@ public abstract class Sprite extends Region {
     }
 
     public abstract Node createView();
-    public abstract void updateVelocity(List<Boid> allBoids);
+    public abstract void updateVelocity(List<Boid> allBoids, List<Obstacle> allObstacles);
 
     public void applyForce(Vector2D force) {
         //acceleration.add(force);

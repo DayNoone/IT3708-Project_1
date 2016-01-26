@@ -29,7 +29,7 @@ public class Attractor extends Sprite {
     }
 
     @Override
-    public void updateVelocity(List<Boid> allBoids) {
+    public void updateVelocity(List<Boid> allBoids, List<Obstacle> allObstacles) {
 
     }
 

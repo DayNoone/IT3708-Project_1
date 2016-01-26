@@ -121,7 +121,7 @@ public class Main extends Application {
                 // seek attractor location, apply force to get towards it
                 allBoids.forEach(boid -> {
                     //boid.seek( attractor.getLocation());
-                    boid.updateVelocity(allBoids);
+                    boid.updateVelocity(allBoids, allObstacles);
                 });
 
                 // move sprite
@@ -177,7 +177,13 @@ public class Main extends Application {
 
         double radius = Settings.OBSTACLE_SIZE;
 
+        System.out.println("location:  X: " + location.x + " Y:  " + location.y);
+
         Obstacle obstacle = new Obstacle(layer, location, radius);
+
+        obstacle.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+            allObstacles.remove(obstacle);
+        });
 
         allObstacles.add(obstacle);
     }
@@ -212,6 +218,7 @@ public class Main extends Application {
         // capture mouse position
         scene.addEventFilter(MouseEvent.ANY, e -> {
             mouseLocation.set(e.getX(), e.getY());
+            //System.out.println("X: " + e.getX() + " Y: " + e.getY());
         });
 
         // Controls listener
@@ -235,7 +242,7 @@ public class Main extends Application {
             cohesionSliderLabel.setText("CohesionWeight: " + Settings.COHESION_WEIGHT);
         });
 
-        scene.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+        playfield.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
             addObstacle(e);
         });
 

@@ -33,12 +33,20 @@ public class Utils {
 
     public static ImageView createObstacleImageView(double radius) {
         //return (new ImageView(new Image("res/Boid.png", size, size/2.0, true, true)));
-        WritableImage wi;
+        return (new ImageView(createObstacleImage(radius)));
+    }
+
+    public static Image createObstacleImage(double radius) {
+        WritableImage wi = new WritableImage((int) radius*2, (int) radius*2);
         Circle circle = new Circle();
-        circle.setFill(Color.BLUE.deriveColor(1, 1, 1, 0.3));
-        circle.setRadius(radius);
-        wi = new WritableImage((int) radius, (int) radius);
-        return new ImageView(wi);
+        circle.setRadius((float) radius);
+        circle.setFill(Color.BLACK);
+
+        SnapshotParameters parameters = new SnapshotParameters();
+        parameters.setFill(Color.TRANSPARENT);
+
+        circle.snapshot(parameters, wi);
+        return wi;
     }
 
     /**

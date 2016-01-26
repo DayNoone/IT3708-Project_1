@@ -13,6 +13,11 @@ public class Vector2D {
         this.y = y;
     }
 
+    public Vector2D(Vector2D vector) {
+        this.x = vector.x;
+        this.y = vector.y;
+    }
+
     public void set(double x, double y) {
         this.x = x;
         this.y = y;
@@ -54,6 +59,13 @@ public class Vector2D {
             normalize();
             multiply(max);
         }
+    }
+
+    public void rotate(double n) {
+        double rx = (this.x * Math.cos(n)) - (this.y * Math.sin(n));
+        double ry = (this.x * Math.sin(n)) + (this.y * Math.cos(n));
+        x = rx;
+        y = ry;
     }
 
     static public Vector2D subtract(Vector2D v1, Vector2D v2) {
