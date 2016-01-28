@@ -30,6 +30,11 @@ public class Utils {
         //return createArrowImageView(id, size, size / 2.0, Color.BLUE, Color.BLUE.deriveColor(1, 1, 1, 0.3), 1);
 
     }
+    public static ImageView createPredatorImageView(double size) {
+        return createArrowImageView(size, size / 2.0, Color.BLUE, Color.BLUE.deriveColor(1, 1, 1, 0.3), 1);
+
+    }
+
 
     public static ImageView createObstacleImageView(double radius) {
         //return (new ImageView(new Image("res/Boid.png", size, size/2.0, true, true)));
@@ -55,8 +60,8 @@ public class Utils {
      * @param height
      * @return
      */
-    public static ImageView createArrowImageView(int id, double width, double height, Paint stroke, Paint fill, double strokeWidth) {
-        return new ImageView( createArrowImage(id, width, height, stroke, fill, strokeWidth));
+    public static ImageView createArrowImageView(double width, double height, Paint stroke, Paint fill, double strokeWidth) {
+        return new ImageView( createArrowImage(width, height, stroke, fill, strokeWidth));
     }
 
     /**
@@ -65,16 +70,13 @@ public class Utils {
      * @param height
      * @return
      */
-    public static Image createArrowImage(int id, double width, double height, Paint stroke, Paint fill, double strokeWidth) {
+    public static Image createArrowImage(double width, double height, Paint stroke, Paint fill, double strokeWidth) {
 
         WritableImage wi;
 
         double arrowWidth = width - strokeWidth * 2;
         double arrowHeight = height - strokeWidth * 2;
 
-        Text text = new Text(String.valueOf(id));
-        //text.opacityProperty(0.1);
-        text.setFont(new Font(5));
         SnapshotParameters textParameters = new SnapshotParameters();
         textParameters.setFill(Color.TRANSPARENT);
 
@@ -93,10 +95,7 @@ public class Utils {
         int imageHeight = (int) height;
 
         wi = new WritableImage( imageWidth, imageHeight);
-        //WritableImage a = arrow.snapshot(parameters, wi);
-        //text.snapshot(textParameters, a);
-
-
+        arrow.snapshot(parameters, wi);
 
         return wi;
 

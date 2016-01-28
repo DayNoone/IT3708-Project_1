@@ -8,12 +8,15 @@ import java.util.concurrent.SynchronousQueue;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -28,6 +31,7 @@ public class Main extends Application {
     List<Obstacle> allObstacles = new ArrayList<Obstacle>();
     List<Attractor> allAttractors = new ArrayList<>();
     List<Boid> allBoids = new ArrayList<>();
+    List<Predator> allPredators = new ArrayList<>();
 
     AnimationTimer gameLoop;
 
@@ -57,10 +61,13 @@ public class Main extends Application {
         seperationSliderLabel = new Label("SeperationWeight: " + Settings.SEPERATION_WEIGHT);
         alignmentSliderLabel = new Label("AlignmentWeight: " + Settings.ALIGNMENT_WEIGHT);
         cohesionSliderLabel = new Label("CohesionWeight: " + Settings.COHESION_WEIGHT);
-        speedSlider = new Slider(0, 100, Settings.SPRITE_SPEED);
+        speedSlider = new Slider(0, 50, Settings.SPRITE_SPEED);
         seperationSlider = new Slider(0, 10, Settings.SEPERATION_WEIGHT);
+        seperationSlider.setBlockIncrement(1);
         alignmentSlider = new Slider(0, 10, Settings.ALIGNMENT_WEIGHT);
+        alignmentSlider.setBlockIncrement(1);
         cohesionSlider = new Slider(0, 10, Settings.COHESION_WEIGHT);
+        cohesionSlider.setBlockIncrement(1);
         controlsBox.getChildren().addAll(button, speedLabel, speedSlider, seperationSliderLabel, seperationSlider, alignmentSliderLabel, alignmentSlider, cohesionSliderLabel, cohesionSlider);
         root.setLeft(controlsBox);
 
@@ -98,13 +105,6 @@ public class Main extends Application {
         for( int i = 0; i < Settings.VEHICLE_COUNT; i++) {
             addVehicles();
         }
-
-        // add attractors
-        for( int i = 0; i < Settings.ATTRACTOR_COUNT; i++) {
-            addAttractors();
-        }
-
-
     }
 
     private void startGame() {
@@ -115,21 +115,22 @@ public class Main extends Application {
             @Override
             public void handle(long now) {
 
-                // currently we have only 1 attractor
-                Attractor attractor = allAttractors.get(0);
-
                 // seek attractor location, apply force to get towards it
                 allBoids.forEach(boid -> {
                     //boid.seek( attractor.getLocation());
                     boid.updateVelocity(allBoids, allObstacles);
                 });
+                allPredators.forEach(predator -> {
+                    predator.updateVelocity(allBoids, allObstacles);
+                });
 
                 // move sprite
                 allBoids.forEach(Sprite::move);
+                allPredators.forEach(Sprite::move);
 
                 // update in fx scene
                 allBoids.forEach(Sprite::display);
-                allAttractors.forEach(Sprite::display);
+                allPredators.forEach(Sprite::display);
                 allObstacles.forEach(Sprite::display);
 
             }
@@ -170,22 +171,53 @@ public class Main extends Application {
 
     }
 
-    private void addObstacle(MouseEvent event) {
+    private void addObstacle(KeyEvent event) {
         Layer layer = playfield;
 
-        Vector2D location = new Vector2D(event.getX(), event.getY());
+        Vector2D location = new Vector2D(mouseLocation.x, mouseLocation.y);
 
         double radius = Settings.OBSTACLE_SIZE;
 
-        System.out.println("location:  X: " + location.x + " Y:  " + location.y);
+        System.out.println("Obstacle @ location:  X: " + location.x + " Y:  " + location.y);
 
         Obstacle obstacle = new Obstacle(layer, location, radius);
 
-        obstacle.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
-            allObstacles.remove(obstacle);
+        obstacle.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println(allObstacles);
+                allObstacles.remove(obstacle);
+                obstacle.remove();
+                System.out.println(allObstacles);
+            }
         });
 
         allObstacles.add(obstacle);
+    }
+
+    private void addPredator(KeyEvent event) {
+        Layer layer = playfield;
+
+        Vector2D location = new Vector2D(mouseLocation.x, mouseLocation.y);
+
+        double width = Settings.PREDATOR_WIDTH;
+        double height = width / 2.0;
+
+        System.out.println("Predator @ location:  X: " + location.x + " Y:  " + location.y);
+
+        Predator predator = new Predator(layer, location, width, height);
+
+        predator.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println(allPredators);
+                allPredators.remove(predator);
+                predator.remove();
+                System.out.println(allPredators);
+            }
+        });
+
+        allPredators.add(predator);
     }
 
     private void addAttractors() {
@@ -216,7 +248,7 @@ public class Main extends Application {
     private void addListeners() {
 
         // capture mouse position
-        scene.addEventFilter(MouseEvent.ANY, e -> {
+        playfield.addEventFilter(MouseEvent.ANY, e -> {
             mouseLocation.set(e.getX(), e.getY());
             //System.out.println("X: " + e.getX() + " Y: " + e.getY());
         });
@@ -242,8 +274,12 @@ public class Main extends Application {
             cohesionSliderLabel.setText("CohesionWeight: " + Settings.COHESION_WEIGHT);
         });
 
-        playfield.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
-            addObstacle(e);
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            if (e.getCode() == KeyCode.O) {
+                addObstacle(e);
+            } else if (e.getCode() == KeyCode.P) {
+                addPredator(e);
+            }
         });
 
         // move attractors via mouse

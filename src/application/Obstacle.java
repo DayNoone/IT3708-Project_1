@@ -1,6 +1,8 @@
 package application;
 
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 import java.util.List;
 
@@ -11,7 +13,17 @@ public class Obstacle extends Sprite {
 
     @Override
     public Node createView() {
-        return Utils.createObstacleImageView((int) width);
+        double radius = width / 2;
+
+        Circle circle = new Circle( radius);
+
+        circle.setCenterX(radius);
+        circle.setCenterY(radius);
+
+        circle.setStroke(Color.GREEN);
+        circle.setFill(Color.GREEN.deriveColor(1, 1, 1, 0.3));
+
+        return circle;
     }
 
     @Override

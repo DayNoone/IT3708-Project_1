@@ -19,55 +19,47 @@ public class Boid extends Sprite {
     @Override
     public void updateVelocity(List<Boid> allBoids, List<Obstacle> allObstacles) {
         List<Boid> neighbors = this.findNeighbours(allBoids);
-        if (neighbors.size() == 0) {
-            return;
+        if (neighbors.size() != 0) {
+            Vector2D sep = calculateSeparationForce(neighbors);
+            Vector2D align = calculateAlignmentForce(neighbors);
+            Vector2D coh = calculateCohesionForce(neighbors);
+
+            sep.normalize();
+            align.normalize();
+            coh.normalize();
+
+            sep.multiply(Settings.SEPERATION_WEIGHT);
+            align.multiply(Settings.ALIGNMENT_WEIGHT);
+            coh.multiply(Settings.COHESION_WEIGHT);
+
+            velocity.add(sep);
+            velocity.add(align);
+            velocity.add(coh);
         }
-        Vector2D sep = calculateSeparationForce(neighbors);
-        Vector2D align = calculateAlignmentForce(neighbors);
-        Vector2D coh = calculateCohesionForce(neighbors);
 
-        sep.multiply(Settings.SEPERATION_WEIGHT);
-        align.multiply(Settings.ALIGNMENT_WEIGHT);
-        coh.multiply(Settings.COHESION_WEIGHT);
-
-        velocity.add(sep);
-        velocity.add(align);
-        velocity.add(coh);
-
-        allObstacles.forEach(obstacle -> {
-            Vector2D clockWiseVelocity = new Vector2D(velocity);
-            Vector2D counterClockWiseVelocity = new Vector2D(velocity);
-            while(this.collides(velocity, obstacle)) {
-               clockWiseVelocity.rotate(1);
-               counterClockWiseVelocity.rotate(-1);
-
-               if (!this.collides(clockWiseVelocity, obstacle)) {
-                   velocity = clockWiseVelocity;
-                   break;
-               }
-               if (!this.collides(counterClockWiseVelocity, obstacle)){
-                   velocity = counterClockWiseVelocity;
-                   break;
-               }
-            }
-        });
+        super.avoidObstacles(allObstacles);
 
         velocity.normalize();
         velocity.multiply(Settings.SPRITE_SPEED);
     }
 
-    private boolean collides(Vector2D velocity, Obstacle obstacle) {
-        Vector2D distance = Vector2D.subtract(obstacle.location, new Vector2D(this.location.x + velocity.x, this.location.y + velocity.y));
-        return distance.magnitude() < obstacle.width;
-    }
-
     private Vector2D calculateSeparationForce(List<Boid> neighbors) {
         // average of the vectors from boid to neighbours
         Vector2D seperation = new Vector2D(0, 0);
-        neighbors.forEach(neighbour -> {
-            seperation.add(Vector2D.subtract(this.location, neighbour.location));
-        });
-        seperation.div(neighbors.size());
+        int counter = 0;
+        for (Boid neighbour: neighbors) {
+            double distance = Vector2D.subtract(this.location, neighbour.location).magnitude();
+            if ((0 < distance) && (distance < (Settings.NEIGHBOUR_RADIUS / 2))) {
+                Vector2D difference = Vector2D.subtract(this.location, neighbour.location);
+                difference.normalize();
+                difference.div(distance);
+                seperation.add(difference);
+                counter++;
+            }
+        }
+        if (counter > 0) {
+            seperation.div(counter);
+        }
         return seperation;
     }
 

@@ -46,10 +46,10 @@ public abstract class Sprite extends Region {
         setPrefSize(width, height);
 
         // add view to this node
-        getChildren().add( view);
+        getChildren().add(view);
 
         // add this node to layer
-        layer.getChildren().add( this);
+        layer.getChildren().add(this);
 
     }
 
@@ -125,6 +125,31 @@ public abstract class Sprite extends Region {
 
     }*/
 
+    public boolean collide(Vector2D velocity, Obstacle obstacle) {
+        Vector2D distance = Vector2D.subtract(obstacle.location, new Vector2D(this.location.x + velocity.x, this.location.y + velocity.y));
+        return distance.magnitude() < obstacle.width;
+    }
+
+    public void avoidObstacles(List<Obstacle> allObstacles) {
+        allObstacles.forEach(obstacle -> {
+            Vector2D clockWiseVelocity = new Vector2D(velocity);
+            Vector2D counterClockWiseVelocity = new Vector2D(velocity);
+            while(this.collide(velocity, obstacle)) {
+                clockWiseVelocity.rotate(Math.PI/16);
+                counterClockWiseVelocity.rotate(-Math.PI/16);
+
+                if (!this.collide(clockWiseVelocity, obstacle)) {
+                    velocity = clockWiseVelocity;
+                    break;
+                }
+                if (!this.collide(counterClockWiseVelocity, obstacle)){
+                    velocity = counterClockWiseVelocity;
+                    break;
+                }
+            }
+        });
+    }
+
     /**
      * Update node position
      */
@@ -134,6 +159,9 @@ public abstract class Sprite extends Region {
 
         setRotate(Math.toDegrees( angle));
 
+    }
+    public void remove() {
+        layer.getChildren().remove( this);
     }
 
     public Vector2D getVelocity() {
