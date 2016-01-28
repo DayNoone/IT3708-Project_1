@@ -3,10 +3,11 @@ package application;
 
 public class Settings {
 
-    public static final double OBSTACLE_SIZE = 50;
-    public static final double PREDATOR_WIDTH = 50;
-    public static final double PREDATOR_SPEED = 5;
-    public static double BOID_WIDHT = 50;
+    public static double OBSTACLE_SIZE = 40;
+    public static final double PREDATOR_WIDTH = 20;
+    public static final double PREDATOR_SPEED = 4;
+    public static double PREDATOR_SEPERATION_WEIGHT = 15;
+    public static double BOID_WIDHT = 20;
     public static double SCENE_WIDTH = 1800;
     public static double SCENE_HEIGHT = 800;
 
@@ -18,7 +19,7 @@ public class Settings {
 
 
     public static int ATTRACTOR_COUNT = 1;
-    public static int VEHICLE_COUNT = 200;
+    public static int VEHICLE_COUNT = 400;
 
     public static double SPRITE_SPEED = 5;
     public static double SPRITE_MAX_FORCE = 0.1;

@@ -27,6 +27,6 @@ public class Obstacle extends Sprite {
     }
 
     @Override
-    public void updateVelocity(List<Boid> allBoids, List<Obstacle> allObstacles) {
+    public void updateVelocity(List<Boid> allBoids, List<Obstacle> allObstacles, List<Predator> allPredators) {
     }
 }

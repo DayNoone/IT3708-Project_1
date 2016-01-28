@@ -17,7 +17,7 @@ public class Boid extends Sprite {
     }
 
     @Override
-    public void updateVelocity(List<Boid> allBoids, List<Obstacle> allObstacles) {
+    public void updateVelocity(List<Boid> allBoids, List<Obstacle> allObstacles, List<Predator> allPredators) {
         List<Boid> neighbors = this.findNeighbours(allBoids);
         if (neighbors.size() != 0) {
             Vector2D sep = calculateSeparationForce(neighbors);
@@ -37,10 +37,27 @@ public class Boid extends Sprite {
             velocity.add(coh);
         }
 
+        escapePredator(allPredators);
+
         super.avoidObstacles(allObstacles);
 
         velocity.normalize();
         velocity.multiply(Settings.SPRITE_SPEED);
+    }
+
+    private void escapePredator(List<Predator> allPredators) {
+        Vector2D newVelocity = new Vector2D(0, 0);
+        for (Predator predator: allPredators) {
+            Vector2D difference = Vector2D.subtract(this.location, predator.location);
+            double distance = difference.magnitude();
+            if (distance < Settings.NEIGHBOUR_RADIUS+50) {
+                difference.normalize();
+                difference.div(distance);
+                newVelocity.add(difference);
+            }
+        }
+        newVelocity.normalize();
+        velocity.add(newVelocity);
     }
 
     private Vector2D calculateSeparationForce(List<Boid> neighbors) {

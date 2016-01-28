@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.SynchronousQueue;
 
 import javafx.animation.AnimationTimer;
@@ -41,8 +42,8 @@ public class Main extends Application {
 
     MouseGestures mouseGestures = new MouseGestures();
 
-    Label seperationSliderLabel, alignmentSliderLabel, cohesionSliderLabel;
-    Slider speedSlider, seperationSlider, alignmentSlider, cohesionSlider;
+    Label seperationSliderLabel, alignmentSliderLabel, cohesionSliderLabel, predatorSeperationSliderLabel, obstacleSizeSliderLabel;
+    Slider speedSlider, seperationSlider, alignmentSlider, cohesionSlider, predatorSeperationSlider, obstacleSizeSlider;
     Button button;
 
     @Override
@@ -61,6 +62,8 @@ public class Main extends Application {
         seperationSliderLabel = new Label("SeperationWeight: " + Settings.SEPERATION_WEIGHT);
         alignmentSliderLabel = new Label("AlignmentWeight: " + Settings.ALIGNMENT_WEIGHT);
         cohesionSliderLabel = new Label("CohesionWeight: " + Settings.COHESION_WEIGHT);
+        predatorSeperationSliderLabel = new Label("Predator SeperationWeight: " + Settings.PREDATOR_SEPERATION_WEIGHT);
+        obstacleSizeSliderLabel = new Label("Obstacle Size: " + Settings.OBSTACLE_SIZE);
         speedSlider = new Slider(0, 50, Settings.SPRITE_SPEED);
         seperationSlider = new Slider(0, 10, Settings.SEPERATION_WEIGHT);
         seperationSlider.setBlockIncrement(1);
@@ -68,7 +71,10 @@ public class Main extends Application {
         alignmentSlider.setBlockIncrement(1);
         cohesionSlider = new Slider(0, 10, Settings.COHESION_WEIGHT);
         cohesionSlider.setBlockIncrement(1);
-        controlsBox.getChildren().addAll(button, speedLabel, speedSlider, seperationSliderLabel, seperationSlider, alignmentSliderLabel, alignmentSlider, cohesionSliderLabel, cohesionSlider);
+        predatorSeperationSlider = new Slider(0, 30, Settings.PREDATOR_SEPERATION_WEIGHT);
+        predatorSeperationSlider.setBlockIncrement(1);
+        obstacleSizeSlider = new Slider(0, 140, Settings.OBSTACLE_SIZE);
+        controlsBox.getChildren().addAll(button, speedLabel, speedSlider, seperationSliderLabel, seperationSlider, alignmentSliderLabel, alignmentSlider, cohesionSliderLabel, cohesionSlider, predatorSeperationSliderLabel, predatorSeperationSlider, obstacleSizeSliderLabel, obstacleSizeSlider);
         root.setLeft(controlsBox);
 
         // Playfield
@@ -118,10 +124,10 @@ public class Main extends Application {
                 // seek attractor location, apply force to get towards it
                 allBoids.forEach(boid -> {
                     //boid.seek( attractor.getLocation());
-                    boid.updateVelocity(allBoids, allObstacles);
+                    boid.updateVelocity(allBoids, allObstacles, allPredators);
                 });
                 allPredators.forEach(predator -> {
-                    predator.updateVelocity(allBoids, allObstacles);
+                    predator.updateVelocity(allBoids, allObstacles, allPredators);
                 });
 
                 // move sprite
@@ -272,6 +278,16 @@ public class Main extends Application {
         cohesionSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             Settings.COHESION_WEIGHT = newValue.intValue();
             cohesionSliderLabel.setText("CohesionWeight: " + Settings.COHESION_WEIGHT);
+        });
+        predatorSeperationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("predatorSeperationSlider Value Changed (newValue: " + newValue.intValue() + ")");
+            Settings.PREDATOR_SEPERATION_WEIGHT = newValue.intValue();
+            predatorSeperationSliderLabel.setText("SeperationWeight: " + Settings.PREDATOR_SEPERATION_WEIGHT);
+        });
+        obstacleSizeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("Obstacle Size Value Changed (newValue: " + newValue.intValue() + ")");
+            Settings.OBSTACLE_SIZE = newValue.intValue();
+            obstacleSizeSliderLabel.setText("Obstacle size: " + Settings.OBSTACLE_SIZE);
         });
 
         scene.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
