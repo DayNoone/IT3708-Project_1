@@ -2,10 +2,8 @@ package application;
 
 import javafx.scene.Node;
 
-import java.nio.channels.SeekableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.SynchronousQueue;
 
 public class Predator extends Boid {
     public Predator(Layer layer, Vector2D location, double width, double height) {
@@ -19,8 +17,8 @@ public class Predator extends Boid {
 
     @Override
     public void updateVelocity(List<Boid> allBoids, List<Obstacle> allObstacles, List<Predator> allPredators) {
-        Boid neighbor = this.findNearestNeighbour(allBoids);
-        List<Predator> neighbours = findNeighbour(allPredators);
+        Boid neighbor = this.findNearestNeighbor(allBoids);
+        List<Predator> neighbours = findNeighbor(allPredators);
         Vector2D newVector = new Vector2D(0, 0);
         if (neighbor != null) {
             Vector2D difference = Vector2D.subtract(neighbor.location, this.location);
@@ -40,7 +38,7 @@ public class Predator extends Boid {
         velocity.multiply(Settings.PREDATOR_SPEED);
     }
 
-    private List<Predator> findNeighbour(List<Predator> allPredators) {
+    private List<Predator> findNeighbor(List<Predator> allPredators) {
         List<Predator> neighbours =  new ArrayList<Predator>();
 
         allPredators.forEach(targetPredator -> {
@@ -56,7 +54,6 @@ public class Predator extends Boid {
     private Vector2D calculateSeparationForce(List<Predator> neighbors) {
         // average of the vectors from boid to neighbours
         Vector2D seperation = new Vector2D(0, 0);
-        int counter = 0;
         for (Predator neighbour: neighbors) {
             double distance = Vector2D.subtract(this.location, neighbour.location).magnitude();
             if ((0 < distance) && (distance < Settings.NEIGHBOUR_RADIUS )) {
@@ -64,7 +61,6 @@ public class Predator extends Boid {
                 difference.normalize();
                 difference.div(distance);
                 seperation.add(difference);
-                counter++;
             }
         }
         if (neighbors.size() > 0) {
@@ -73,7 +69,7 @@ public class Predator extends Boid {
         return seperation;
     }
 
-    private Boid findNearestNeighbour(List<Boid> allBoids) {
+    private Boid findNearestNeighbor(List<Boid> allBoids) {
         Boid neighbour = allBoids.get(0);
         double distance = (Vector2D.subtract(neighbour.location, this.location)).magnitude();
         for (Boid boid : allBoids) {

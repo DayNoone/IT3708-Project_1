@@ -32,11 +32,6 @@ public class Vector2D {
         y += v.y;
     }
 
-    public void add(double x, double y) {
-        this.x += x;
-        this.y += y;
-    }
-
     public void multiply(double n) {
         x *= n;
         y *= n;
@@ -51,13 +46,6 @@ public class Vector2D {
         double m = magnitude();
         if (m != 0 && m != 1) {
             div(m);
-        }
-    }
-
-    public void limit(double max) {
-        if (magnitude() > max) {
-            normalize();
-            multiply(max);
         }
     }
 

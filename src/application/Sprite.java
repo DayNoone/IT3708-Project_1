@@ -7,21 +7,16 @@ import java.util.List;
 
 public abstract class Sprite extends Region {
 
-    private static int idCounter;
-
     Vector2D location;
     Vector2D velocity;
 
     Node view;
-
-    int id;
 
     // view dimensions
     double width;
     double height;
     double centerX;
     double centerY;
-    double radius;
 
 
     double angle;
@@ -29,8 +24,6 @@ public abstract class Sprite extends Region {
     Layer layer = null;
 
     public Sprite(Layer layer, Vector2D location, Vector2D velocity, double width, double height) {
-
-        this.id = idCounter++;
 
         this.layer = layer;
 
@@ -56,18 +49,7 @@ public abstract class Sprite extends Region {
     public abstract Node createView();
     public abstract void updateVelocity(List<Boid> allBoids, List<Obstacle> allObstacles, List<Predator> allPredators);
 
-    public void applyForce(Vector2D force) {
-        //acceleration.add(force);
-    }
-
     public void move() {
-
-        // set velocity depending on acceleration
-        //velocity.add(acceleration);
-        //velocity.add(Settings.SPRITE_SPEED, Settings.SPRITE_SPEED);
-
-        // limit velocity to max speed
-        //velocity.limit(Settings.SPRITE_SPEED);
 
         // change location depending on velocity
         location.add(velocity);
@@ -88,42 +70,7 @@ public abstract class Sprite extends Region {
             this.location.y = this.layer.getHeight();
         }
 
-        // clear acceleration
-        //acceleration.multiply(0);
     }
-
-    /**
-     * Move sprite towards target
-     */
-    /*public void seek(Vector2D target) {
-
-        Vector2D desired = Vector2D.subtract(target, location);
-
-        // The distance is the magnitude of the vector pointing from location to target.
-
-        double d = desired.magnitude();
-        desired.normalize();
-
-        // If we are closer than 100 pixels...
-        if (d < Settings.SPRITE_SLOW_DOWN_DISTANCE) {
-
-            // ...set the magnitude according to how close we are.
-            double m = Utils.map(d, 0, Settings.SPRITE_SLOW_DOWN_DISTANCE, 0, Settings.SPRITE_SPEED);
-            desired.multiply(m);
-
-        }
-        // Otherwise, proceed at maximum speed.
-        else {
-            desired.multiply(Settings.SPRITE_SPEED);
-        }
-
-        // The usual steering = desired - velocity
-        Vector2D steer = Vector2D.subtract(desired, velocity);
-        steer.limit(Settings.SPRITE_MAX_FORCE);
-
-        applyForce(steer);
-
-    }*/
 
     public boolean collide(Vector2D velocity, Obstacle obstacle) {
         Vector2D distance = Vector2D.subtract(obstacle.location, new Vector2D(this.location.x + velocity.x, this.location.y + velocity.y));
@@ -162,19 +109,6 @@ public abstract class Sprite extends Region {
     }
     public void remove() {
         layer.getChildren().remove( this);
-    }
-
-    public Vector2D getVelocity() {
-        return velocity;
-    }
-
-    public Vector2D getLocation() {
-        return location;
-    }
-
-    public void setLocation( double x, double y) {
-        location.x = x;
-        location.y = y;
     }
 
     public void setLocationOffset( double x, double y) {

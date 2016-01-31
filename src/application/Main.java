@@ -4,15 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.SynchronousQueue;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
@@ -30,7 +27,6 @@ public class Main extends Application {
     Layer playfield;
 
     List<Obstacle> allObstacles = new ArrayList<Obstacle>();
-    List<Attractor> allAttractors = new ArrayList<>();
     List<Boid> allBoids = new ArrayList<>();
     List<Predator> allPredators = new ArrayList<>();
 
@@ -40,11 +36,8 @@ public class Main extends Application {
 
     Scene scene;
 
-    MouseGestures mouseGestures = new MouseGestures();
-
     Label seperationSliderLabel, alignmentSliderLabel, cohesionSliderLabel, predatorSeperationSliderLabel, obstacleSizeSliderLabel;
     Slider speedSlider, seperationSlider, alignmentSlider, cohesionSlider, predatorSeperationSlider, obstacleSizeSlider;
-    Button button;
 
     @Override
     public void start(Stage primaryStage) {
@@ -56,36 +49,36 @@ public class Main extends Application {
 
         // Controls
         VBox controlsBox = new VBox(20);
+        controlsBox.setAlignment(Pos.TOP_CENTER);
+        controlsBox.setMaxWidth(Settings.CONTROLS_WIDTH);
         controlsBox.setId("controllerBox");
-        button = new Button("Click Me");
         Label speedLabel = new Label("Speed");
         seperationSliderLabel = new Label("SeperationWeight: " + Settings.SEPERATION_WEIGHT);
         alignmentSliderLabel = new Label("AlignmentWeight: " + Settings.ALIGNMENT_WEIGHT);
         cohesionSliderLabel = new Label("CohesionWeight: " + Settings.COHESION_WEIGHT);
         predatorSeperationSliderLabel = new Label("Predator SeperationWeight: " + Settings.PREDATOR_SEPERATION_WEIGHT);
         obstacleSizeSliderLabel = new Label("Obstacle Size: " + Settings.OBSTACLE_SIZE);
-        speedSlider = new Slider(0, 50, Settings.SPRITE_SPEED);
-        seperationSlider = new Slider(0, 10, Settings.SEPERATION_WEIGHT);
+        speedSlider = new Slider(0, 50, Settings.BOID_SPEED);
+        seperationSlider = new Slider(1, 10, Settings.SEPERATION_WEIGHT);
         seperationSlider.setBlockIncrement(1);
-        alignmentSlider = new Slider(0, 10, Settings.ALIGNMENT_WEIGHT);
+        alignmentSlider = new Slider(1, 10, Settings.ALIGNMENT_WEIGHT);
         alignmentSlider.setBlockIncrement(1);
-        cohesionSlider = new Slider(0, 10, Settings.COHESION_WEIGHT);
+        cohesionSlider = new Slider(1, 10, Settings.COHESION_WEIGHT);
         cohesionSlider.setBlockIncrement(1);
-        predatorSeperationSlider = new Slider(0, 30, Settings.PREDATOR_SEPERATION_WEIGHT);
+        predatorSeperationSlider = new Slider(1, 30, Settings.PREDATOR_SEPERATION_WEIGHT);
         predatorSeperationSlider.setBlockIncrement(1);
-        obstacleSizeSlider = new Slider(0, 140, Settings.OBSTACLE_SIZE);
-        controlsBox.getChildren().addAll(button, speedLabel, speedSlider, seperationSliderLabel, seperationSlider, alignmentSliderLabel, alignmentSlider, cohesionSliderLabel, cohesionSlider, predatorSeperationSliderLabel, predatorSeperationSlider, obstacleSizeSliderLabel, obstacleSizeSlider);
+        obstacleSizeSlider = new Slider(1, 140, Settings.OBSTACLE_SIZE);
         root.setLeft(controlsBox);
 
         // Playfield
-        playfield = new Layer( Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
+        playfield = new Layer(Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
         // entire game as layers
         Pane layerPane = new Pane();
         layerPane.getChildren().addAll(playfield);
-        root.setCenter(layerPane);
+        root.setRight(layerPane);
 
 
-        scene = new Scene(root, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
+        scene = new Scene(root, Settings.SCENE_WIDTH+Settings.CONTROLS_WIDTH, Settings.SCENE_HEIGHT);
         File f = new File("src/application/style.css");
         scene.getStylesheets().clear();
         scene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
@@ -108,8 +101,8 @@ public class Main extends Application {
     private void prepareGame() {
 
         // add vehicles
-        for( int i = 0; i < Settings.VEHICLE_COUNT; i++) {
-            addVehicles();
+        for( int i = 0; i < Settings.BOID_COUNT; i++) {
+            addBoids();
         }
     }
 
@@ -121,9 +114,7 @@ public class Main extends Application {
             @Override
             public void handle(long now) {
 
-                // seek attractor location, apply force to get towards it
                 allBoids.forEach(boid -> {
-                    //boid.seek( attractor.getLocation());
                     boid.updateVelocity(allBoids, allObstacles, allPredators);
                 });
                 allPredators.forEach(predator -> {
@@ -149,7 +140,7 @@ public class Main extends Application {
     /**
      * Add single vehicle to list of vehicles and to the playfield
      */
-    private void addVehicles() {
+    private void addBoids() {
 
         Layer layer = playfield;
 
@@ -162,7 +153,7 @@ public class Main extends Application {
         double vy = random.nextDouble() * 10 -5;;
 
         // dimensions
-        double width = Settings.BOID_WIDHT;
+        double width = Settings.BOID_WIDTH;
         double height = width / 2.0;
 
         // create boid data
@@ -177,7 +168,7 @@ public class Main extends Application {
 
     }
 
-    private void addObstacle(KeyEvent event) {
+    private void addObstacles(KeyEvent event) {
         Layer layer = playfield;
 
         Vector2D location = new Vector2D(mouseLocation.x, mouseLocation.y);
@@ -201,7 +192,7 @@ public class Main extends Application {
         allObstacles.add(obstacle);
     }
 
-    private void addPredator(KeyEvent event) {
+    private void addPredators(KeyEvent event) {
         Layer layer = playfield;
 
         Vector2D location = new Vector2D(mouseLocation.x, mouseLocation.y);
@@ -226,45 +217,15 @@ public class Main extends Application {
         allPredators.add(predator);
     }
 
-    private void addAttractors() {
-
-        Layer layer = playfield;
-
-        // center attractor
-        double x = layer.getWidth() / 2;
-        double y = layer.getHeight() / 2;
-
-        // dimensions
-        double width = 100;
-        double height = 100;
-
-        // create attractor data
-        Vector2D location = new Vector2D( x,y);
-        Vector2D velocity = new Vector2D( 0,0);
-        Vector2D acceleration = new Vector2D( 0,0);
-
-        // create attractor and add to layer
-        Attractor attractor = new Attractor( layer, location, velocity, acceleration, width, height);
-
-        // register sprite
-        allAttractors.add(attractor);
-
-    }
-
     private void addListeners() {
 
         // capture mouse position
         playfield.addEventFilter(MouseEvent.ANY, e -> {
             mouseLocation.set(e.getX(), e.getY());
-            //System.out.println("X: " + e.getX() + " Y: " + e.getY());
         });
 
-        // Controls listener
-        button.setOnAction((event) -> {
-            System.out.print("Button Action\n");
-        });
         speedSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            Settings.SPRITE_SPEED = newValue.intValue();
+            Settings.BOID_SPEED = newValue.intValue();
         });
         seperationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             System.out.println("seperationSlider Value Changed (newValue: " + newValue.intValue() + ")");
@@ -292,16 +253,11 @@ public class Main extends Application {
 
         scene.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
             if (e.getCode() == KeyCode.O) {
-                addObstacle(e);
+                addObstacles(e);
             } else if (e.getCode() == KeyCode.P) {
-                addPredator(e);
+                addPredators(e);
             }
         });
-
-        // move attractors via mouse
-        for( Attractor attractor: allAttractors) {
-            mouseGestures.makeDraggable(attractor);
-        }
     }
 
     public static void main(String[] args) {

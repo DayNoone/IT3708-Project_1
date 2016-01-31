@@ -42,7 +42,7 @@ public class Boid extends Sprite {
         super.avoidObstacles(allObstacles);
 
         velocity.normalize();
-        velocity.multiply(Settings.SPRITE_SPEED);
+        velocity.multiply(Settings.BOID_SPEED);
     }
 
     private void escapePredator(List<Predator> allPredators) {
