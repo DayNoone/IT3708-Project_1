@@ -50,7 +50,7 @@ public class Boid extends Sprite {
         for (Predator predator: allPredators) {
             Vector2D difference = Vector2D.subtract(this.location, predator.location);
             double distance = difference.magnitude();
-            if (distance < Settings.NEIGHBOUR_RADIUS+50) {
+            if ((0 < distance) && (distance < Settings.NEIGHBOUR_RADIUS+50)) {
                 difference.normalize();
                 difference.div(distance);
                 newVelocity.add(difference);
@@ -66,7 +66,7 @@ public class Boid extends Sprite {
         int counter = 0;
         for (Boid neighbour: neighbors) {
             double distance = Vector2D.subtract(this.location, neighbour.location).magnitude();
-            if ((0 < distance) && (distance < (Settings.NEIGHBOUR_RADIUS / 2))) {
+            if ((0 < distance) && (distance < (Settings.NEIGHBOUR_RADIUS /3))) {
                 Vector2D difference = Vector2D.subtract(this.location, neighbour.location);
                 difference.normalize();
                 difference.div(distance);
@@ -86,8 +86,6 @@ public class Boid extends Sprite {
         neighbors.forEach(neighbour -> {
             alignment.add(neighbour.velocity);
         });
-
-        alignment.div(neighbors.size());
         return alignment;
     }
 
@@ -97,7 +95,9 @@ public class Boid extends Sprite {
         neighbors.forEach(neighbour -> {
             cohesion.add(neighbour.location);
         });
-        cohesion.div(neighbors.size());
+        if (neighbors.size() > 0) {
+            cohesion.div(neighbors.size());
+        }
         return Vector2D.subtract(cohesion, this.location);
     }
 

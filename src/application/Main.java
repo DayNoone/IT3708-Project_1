@@ -50,6 +50,7 @@ public class Main extends Application {
         // Controls
         VBox controlsBox = new VBox(20);
         controlsBox.setAlignment(Pos.TOP_CENTER);
+        controlsBox.setMinWidth(Settings.CONTROLS_WIDTH);
         controlsBox.setMaxWidth(Settings.CONTROLS_WIDTH);
         controlsBox.setId("controllerBox");
         Label speedLabel = new Label("Speed");
@@ -68,17 +69,18 @@ public class Main extends Application {
         predatorSeperationSlider = new Slider(1, 30, Settings.PREDATOR_SEPERATION_WEIGHT);
         predatorSeperationSlider.setBlockIncrement(1);
         obstacleSizeSlider = new Slider(1, 140, Settings.OBSTACLE_SIZE);
+        controlsBox.getChildren().addAll(speedLabel, speedSlider, seperationSliderLabel, seperationSlider, alignmentSliderLabel, alignmentSlider, cohesionSliderLabel, cohesionSlider, predatorSeperationSliderLabel, predatorSeperationSlider, obstacleSizeSliderLabel, obstacleSizeSlider);
         root.setLeft(controlsBox);
 
         // Playfield
-        playfield = new Layer(Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
+        playfield = new Layer(Settings.SCENE_WIDTH-Settings.CONTROLS_WIDTH, Settings.SCENE_HEIGHT);
         // entire game as layers
         Pane layerPane = new Pane();
         layerPane.getChildren().addAll(playfield);
-        root.setRight(layerPane);
+        root.setCenter(layerPane);
 
 
-        scene = new Scene(root, Settings.SCENE_WIDTH+Settings.CONTROLS_WIDTH, Settings.SCENE_HEIGHT);
+        scene = new Scene(root, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
         File f = new File("src/application/style.css");
         scene.getStylesheets().clear();
         scene.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
@@ -179,16 +181,18 @@ public class Main extends Application {
 
         Obstacle obstacle = new Obstacle(layer, location, radius);
 
-        obstacle.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println(allObstacles);
-                allObstacles.remove(obstacle);
-                obstacle.remove();
-                System.out.println(allObstacles);
-            }
+        obstacle.setOnMouseClicked(event1 -> {
+            System.out.println(allObstacles);
+            allObstacles.remove(obstacle);
+            obstacle.remove();
+            System.out.println(allObstacles);
         });
-
+        for (Boid boid: allBoids) {
+            if (boid.collide(boid.velocity, obstacle)) {
+                obstacle.remove();
+                return;
+            }
+        }
         allObstacles.add(obstacle);
     }
 
@@ -204,14 +208,11 @@ public class Main extends Application {
 
         Predator predator = new Predator(layer, location, width, height);
 
-        predator.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println(allPredators);
-                allPredators.remove(predator);
-                predator.remove();
-                System.out.println(allPredators);
-            }
+        predator.setOnMouseClicked(event1 -> {
+            System.out.println(allPredators);
+            allPredators.remove(predator);
+            predator.remove();
+            System.out.println(allPredators);
         });
 
         allPredators.add(predator);

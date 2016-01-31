@@ -20,6 +20,6 @@ public class Settings {
     public static double OBSTACLE_SIZE = 40;
 
     public static final double PREDATOR_WIDTH = 20;
-    public static final double PREDATOR_SPEED = 4;
+    public static final double PREDATOR_SPEED = 3;
     public static double PREDATOR_SEPERATION_WEIGHT = 15;
 }

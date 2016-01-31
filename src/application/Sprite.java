@@ -74,6 +74,10 @@ public abstract class Sprite extends Region {
 
     public boolean collide(Vector2D velocity, Obstacle obstacle) {
         Vector2D distance = Vector2D.subtract(obstacle.location, new Vector2D(this.location.x + velocity.x, this.location.y + velocity.y));
+
+        double dist = distance.magnitude();
+
+        double wi = obstacle.width;
         return distance.magnitude() < obstacle.width;
     }
 
