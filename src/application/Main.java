@@ -7,7 +7,6 @@ import java.util.Random;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -189,6 +188,12 @@ public class Main extends Application {
         });
         for (Boid boid: allBoids) {
             if (boid.collide(boid.velocity, obstacle)) {
+                obstacle.remove();
+                return;
+            }
+        }
+        for (Predator predator: allPredators) {
+            if (predator.collide(predator.velocity, obstacle)) {
                 obstacle.remove();
                 return;
             }

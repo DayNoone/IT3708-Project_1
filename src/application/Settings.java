@@ -9,7 +9,7 @@ public class Settings {
 
     public static double NEIGHBOUR_RADIUS = 50;
 
-    public static int BOID_COUNT = 1;
+    public static int BOID_COUNT = 200;
     public static double BOID_WIDTH = 20;
     public static double BOID_SPEED = 5;
 
@@ -21,5 +21,5 @@ public class Settings {
 
     public static final double PREDATOR_WIDTH = 20;
     public static final double PREDATOR_SPEED = 3;
-    public static double PREDATOR_SEPERATION_WEIGHT = 15;
+    public static double PREDATOR_SEPERATION_WEIGHT = 5;
 }

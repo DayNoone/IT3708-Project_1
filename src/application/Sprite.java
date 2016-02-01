@@ -74,10 +74,6 @@ public abstract class Sprite extends Region {
 
     public boolean collide(Vector2D velocity, Obstacle obstacle) {
         Vector2D distance = Vector2D.subtract(obstacle.location, new Vector2D(this.location.x + velocity.x, this.location.y + velocity.y));
-
-        double dist = distance.magnitude();
-
-        double wi = obstacle.width;
         return distance.magnitude() < obstacle.width;
     }
 
@@ -86,9 +82,8 @@ public abstract class Sprite extends Region {
             Vector2D clockWiseVelocity = new Vector2D(velocity);
             Vector2D counterClockWiseVelocity = new Vector2D(velocity);
             while(this.collide(velocity, obstacle)) {
-                clockWiseVelocity.rotate(Math.PI/16);
-                counterClockWiseVelocity.rotate(-Math.PI/16);
-
+                clockWiseVelocity.rotate(Math.PI/8);
+                counterClockWiseVelocity.rotate(-Math.PI/8);
                 if (!this.collide(clockWiseVelocity, obstacle)) {
                     velocity = clockWiseVelocity;
                     break;

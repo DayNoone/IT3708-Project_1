@@ -1,6 +1,8 @@
 package application;
 
 import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +14,7 @@ public class Predator extends Boid {
 
     @Override
     public Node createView() {
-        return Utils.createPredatorImageView((int) width);
+        return (new ImageView(new Image("res/Predator.png", width, height, true, true)));
     }
 
     @Override
@@ -29,7 +31,7 @@ public class Predator extends Boid {
 
         Vector2D sep = calculateSeparationForce(neighbours);
         sep.normalize();
-        sep.multiply(Settings.PREDATOR_SEPERATION_WEIGHT);
+        sep.multiply(Settings.PREDATOR_SEPERATION_WEIGHT/10);
         velocity.add(sep);
 
         super.avoidObstacles(allObstacles);

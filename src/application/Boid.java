@@ -1,6 +1,8 @@
 package application;
 
 import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +15,7 @@ public class Boid extends Sprite {
 
     @Override
     public Node createView() {
-        return Utils.createArrowImageView((int) width);
+        return (new ImageView(new Image("res/Boid.png", width, height, true, true)));
     }
 
     @Override
