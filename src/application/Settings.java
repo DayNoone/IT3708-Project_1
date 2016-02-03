@@ -9,7 +9,7 @@ public class Settings {
 
     public static double NEIGHBOUR_RADIUS = 50;
 
-    public static int BOID_COUNT = 200;
+    public static int BOID_COUNT = 300;
     public static double BOID_WIDTH = 20;
     public static double BOID_SPEED = 5;
 

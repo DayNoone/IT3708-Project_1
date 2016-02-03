@@ -20,8 +20,8 @@ public class Obstacle extends Sprite {
         circle.setCenterX(radius);
         circle.setCenterY(radius);
 
-        circle.setStroke(Color.BLACK);
-        circle.setFill(Color.BLACK.deriveColor(1, 1, 1, 0.3));
+        circle.setStroke(Color.web("#3b444b"));
+        circle.setFill(Color.web("#3b444b", 0.3));
 
         return circle;
     }

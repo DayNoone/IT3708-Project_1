@@ -9,6 +9,7 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
@@ -17,6 +18,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -25,7 +27,7 @@ public class Main extends Application {
 
     Layer playfield;
 
-    List<Obstacle> allObstacles = new ArrayList<Obstacle>();
+    List<Obstacle> allObstacles = new ArrayList<>();
     List<Boid> allBoids = new ArrayList<>();
     List<Predator> allPredators = new ArrayList<>();
 
@@ -35,7 +37,8 @@ public class Main extends Application {
 
     Scene scene;
 
-    Label seperationSliderLabel, alignmentSliderLabel, cohesionSliderLabel, predatorSeperationSliderLabel, obstacleSizeSliderLabel;
+    Button removeObstacles, removePredators;
+    Label controlsHeader, seperationSliderLabel, alignmentSliderLabel, cohesionSliderLabel, predatorSeperationSliderLabel, obstacleSizeSliderLabel;
     Slider speedSlider, seperationSlider, alignmentSlider, cohesionSlider, predatorSeperationSlider, obstacleSizeSlider;
 
     @Override
@@ -52,6 +55,14 @@ public class Main extends Application {
         controlsBox.setMinWidth(Settings.CONTROLS_WIDTH);
         controlsBox.setMaxWidth(Settings.CONTROLS_WIDTH);
         controlsBox.setId("controllerBox");
+
+        controlsHeader = new Label("Controls");
+        controlsHeader.setFont(new Font(22));
+        controlsHeader.setMinHeight(60);
+
+        removeObstacles = new Button("Remove all Predators");
+        removePredators = new Button("Remove all Obstacles");
+
         Label speedLabel = new Label("Speed");
         seperationSliderLabel = new Label("SeperationWeight: " + Settings.SEPERATION_WEIGHT);
         alignmentSliderLabel = new Label("AlignmentWeight: " + Settings.ALIGNMENT_WEIGHT);
@@ -68,7 +79,7 @@ public class Main extends Application {
         predatorSeperationSlider = new Slider(1, 30, Settings.PREDATOR_SEPERATION_WEIGHT);
         predatorSeperationSlider.setBlockIncrement(1);
         obstacleSizeSlider = new Slider(1, 140, Settings.OBSTACLE_SIZE);
-        controlsBox.getChildren().addAll(speedLabel, speedSlider, seperationSliderLabel, seperationSlider, alignmentSliderLabel, alignmentSlider, cohesionSliderLabel, cohesionSlider, predatorSeperationSliderLabel, predatorSeperationSlider, obstacleSizeSliderLabel, obstacleSizeSlider);
+        controlsBox.getChildren().addAll(controlsHeader, removeObstacles, removePredators, speedLabel, speedSlider, seperationSliderLabel, seperationSlider, alignmentSliderLabel, alignmentSlider, cohesionSliderLabel, cohesionSlider, predatorSeperationSliderLabel, predatorSeperationSlider, obstacleSizeSliderLabel, obstacleSizeSlider);
         root.setLeft(controlsBox);
 
         // Playfield
@@ -115,9 +126,12 @@ public class Main extends Application {
             @Override
             public void handle(long now) {
 
+                // update direction of boid
                 allBoids.forEach(boid -> {
                     boid.updateVelocity(allBoids, allObstacles, allPredators);
                 });
+
+                // update direction of predator
                 allPredators.forEach(predator -> {
                     predator.updateVelocity(allBoids, allObstacles, allPredators);
                 });
@@ -170,6 +184,7 @@ public class Main extends Application {
     }
 
     private void addObstacles(KeyEvent event) {
+
         Layer layer = playfield;
 
         Vector2D location = new Vector2D(mouseLocation.x, mouseLocation.y);
@@ -180,12 +195,6 @@ public class Main extends Application {
 
         Obstacle obstacle = new Obstacle(layer, location, radius);
 
-        obstacle.setOnMouseClicked(event1 -> {
-            System.out.println(allObstacles);
-            allObstacles.remove(obstacle);
-            obstacle.remove();
-            System.out.println(allObstacles);
-        });
         for (Boid boid: allBoids) {
             if (boid.collide(boid.velocity, obstacle)) {
                 obstacle.remove();
@@ -198,6 +207,19 @@ public class Main extends Application {
                 return;
             }
         }
+
+        if (location.x < 0) {
+            obstacle.remove();
+            return;
+        }
+
+        obstacle.setOnMouseClicked(event1 -> {
+            System.out.println(allObstacles);
+            allObstacles.remove(obstacle);
+            obstacle.remove();
+            System.out.println(allObstacles);
+        });
+
         allObstacles.add(obstacle);
     }
 
@@ -224,6 +246,19 @@ public class Main extends Application {
     }
 
     private void addListeners() {
+        // Controls listener
+        removeObstacles.setOnAction((event) -> {
+            for(Predator predator: allPredators) {
+                predator.remove();
+            }
+            allPredators.clear();
+        });
+        removePredators.setOnAction((event) -> {
+            for(Obstacle obstacle: allObstacles) {
+                obstacle.remove();
+            }
+            allObstacles.clear();
+        });
 
         // capture mouse position
         playfield.addEventFilter(MouseEvent.ANY, e -> {
