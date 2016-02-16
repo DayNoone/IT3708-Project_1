@@ -6,15 +6,13 @@ import javafx.scene.shape.Circle;
 
 import java.util.List;
 
-public class Attractor extends Sprite {
-
-    public Attractor(Layer layer, Vector2D location, Vector2D velocity, Vector2D acceleration, double width, double height) {
-        super(layer, location, velocity, width, height);
+public class Obstacle extends Sprite {
+    public Obstacle(Layer layer, Vector2D location, double radius) {
+        super(layer, location, new Vector2D(0, 0), radius, radius);
     }
 
     @Override
     public Node createView() {
-
         double radius = width / 2;
 
         Circle circle = new Circle( radius);
@@ -22,15 +20,13 @@ public class Attractor extends Sprite {
         circle.setCenterX(radius);
         circle.setCenterY(radius);
 
-        circle.setStroke(Color.GREEN);
-        circle.setFill(Color.GREEN.deriveColor(1, 1, 1, 0.3));
+        circle.setStroke(Color.web("#3b444b"));
+        circle.setFill(Color.web("#3b444b", 0.3));
 
         return circle;
     }
 
     @Override
-    public void updateVelocity(List<Boid> allBoids) {
-
+    public void updateVelocity(List<Boid> allBoids, List<Obstacle> allObstacles, List<Predator> allPredators) {
     }
-
 }
